@@ -1,0 +1,1521 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <script src="jQuery/jquery-2.1.1.min.js"></script>
+    <script src="jQuery/jquery.mobile/jquery.mobile-1.4.4.min.js"></script>
+    <link href="jQuery/jquery.mobile/jquery.mobile-1.4.4.min.css" rel="stylesheet" />
+    <script src="jQuery/jquery-ui/jquery-ui.min.js"></script>
+    <link href="jQuery/jquery-ui/jquery-ui.min.css" rel="stylesheet" />
+
+    <script src="script.js" type="text/javascript"></script>
+
+    <script src="cordova.js" type="text/javascript"></script>
+    <script src="SocialSharing.js" type="text/javascript"></script>
+
+    <style>
+        ui-popup-screen.in, .ui-popup-screen {
+            background-color: #ffffff !important;
+            opacity: 0.5 !important;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+    
+    <script type="text/javascript">
+
+        $(function () {
+            $("#ddlRegion").change(function () {
+                var selectedItem = $(this).val();
+                if (selectedItem == 'all'){
+                    var ddl = $('#ddlCiudad');
+                    ddl.empty();
+                    $(document.createElement('option'))
+                        .attr('value', '')
+                        .text('Seleccionar...')
+                        .appendTo(ddl);
+                    $(document.createElement('option'))
+                        .attr('value', 'all')
+                        .text('TODOS')
+                        .appendTo(ddl);
+                }else{
+                    $.getJSON('http://poi.colombiajoven.gov.co/api/municipio/' + selectedItem, function (result) {
+                        var ddl = $('#ddlCiudad');
+                        ddl.empty();
+                        $(document.createElement('option'))
+                            .attr('value', '')
+                            .text('Seleccionar...')
+                            .appendTo(ddl);
+                        $(document.createElement('option'))
+                            .attr('value', 'all')
+                            .text('TODOS')
+                            .appendTo(ddl);
+                        $(result).each(function () {
+                            $(document.createElement('option'))
+                                .attr('value', this.ID)
+                                .text(this.Nombre)
+                                .appendTo(ddl);
+                        });
+                    });
+                }
+            });
+        });
+
+        $(function () {
+            $("#ddlPais").change(function () {
+                var selectedItem = $(this).val();
+                // Colombia = 3686110; 
+                if(selectedItem == "3686110"){
+                  $.getJSON('http://poi.colombiajoven.gov.co/api/departamento/' + selectedItem, function (result) {
+                      var ddl = $('#ddlRegion');
+                      ddl.empty();
+                      $(document.createElement('option'))
+                              .attr('value', '')
+                              .text('Seleccionar...')
+                              .appendTo(ddl);
+                      $(document.createElement('option'))
+                              .attr('value', 'all')
+                              .text('TODOS')
+                              .appendTo(ddl);
+                      $(result).each(function () {
+                          $(document.createElement('option'))
+                              .attr('value', this.ID)
+                              .text(this.Nombre)
+                              .appendTo(ddl);
+                      });
+                  });    
+                }else if(selectedItem == "000000"){ //Exterior
+                    var ddlRg = $('#ddlRegion');
+                    ddlRg.empty();
+                    $(document.createElement('option'))
+                        .attr('value', 'na')
+                        .text("N/A")
+                        .appendTo(ddlRg);
+                      
+                    var ddlCiu = $('#ddlCiudad');
+                    ddlCiu.empty();
+                    $(document.createElement('option'))
+                        .attr('value', 'na')
+                        .text("N/A")
+                        .appendTo(ddlCiu);
+                    
+                }
+                
+            });
+        });
+
+        $(function () {
+            // Colombia = 3686110; 
+            var ddl = $('#ddlPais');
+            ddl.empty();
+            $(document.createElement('option'))
+                .attr('value', '')
+                .text('Seleccionar...')
+                .appendTo(ddl);
+            $(document.createElement('option'))
+                .attr('value', '3686110')
+                .text('Colombia')
+                .appendTo(ddl);
+            $(document.createElement('option'))
+                .attr('value', '000000')
+                .text('Exterior')
+                .appendTo(ddl);
+            
+            /*
+            //Muestra Todos los Paises
+            $.getJSON('http://poi.colombiajoven.gov.co/api/pais', function (result) {
+                var ddl = $('#ddlPais');
+                ddl.empty();
+                $(result).each(function () {
+                    $(document.createElement('option'))
+                        .attr('value', this.ID)
+                        .text(this.Nombre)
+                        .appendTo(ddl);
+                });
+            });
+            */
+        });
+    </script>
+
+    <title>Sí Joven App</title>
+</head>
+<body style="background-color:#e9e9e9; text-shadow:none">
+    <!--Menu Inicio-->
+    <div data-role="page" id="inicio">
+        <div data-role="header" data-position="fixed">
+            <center>
+                <img width="55%" src="img/icon-sijoven.png" />
+            </center>
+        </div>
+        <div data-role="content" id="seccionContent">
+            <ul data-role="listview" data-inset="true" id="seccionContent" class="ui-nodisc-icon ui-alt-icon">
+                <li data-role="list-divider">
+                    <h1>¿Que estas buscado hoy?</h1>
+                </li>
+                <li>
+                    <a href="#ListaUser" data-transition="none">
+                        <img src="img/ico/user.png" />
+                        <h2>Mi Sí Joven</h2>
+                        <p>Opciones Personalizadas</p>
+                    </a>
+                </li>
+                <li data-role="list-divider" />
+                <li>
+                    <a href="#ListaAll" data-transition="none">
+                        <img src="img/ico/ico_300.png" />
+                        <h2>Todo</h2>
+                        <p>Todas las actividades</p>
+                        <span id="CountAll" class="ui-li-count">...</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#ListaEdu" data-transition="none">
+                        <img src="img/ico/1ico_edu.png" />
+                        <h2>Aprende y Crece</h2>
+                        <p>Educación y Becas</p>
+                        <span id="CountEdu" class="ui-li-count">...</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#ListaEmp" data-transition="none">
+                        <img src="img/ico/2ico_emp.png" />
+                        <h2>Descubre y Trabaja</h2>
+                        <p>Empleo y emprendimiento</p>
+                        <span id="CountEmp" class="ui-li-count">...</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#ListaPre" data-transition="none">
+                        <img src="img/ico/3ico_pre.png" />
+                        <h2>Cuídate y Denuncia</h2>
+                        <p>Prevención e Información</p>
+                        <span id="CountPre" class="ui-li-count">...</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#ListaRec" data-transition="none">
+                        <img src="img/ico/4ico_rec.png" />
+                        <h2>Diviértete y Disfruta</h2>
+                        <p>Cultura y Recreación</p>
+                        <span id="CountRec" class="ui-li-count">...</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#ListaVol" data-transition="none">
+                        <img src="img/ico/5ico_vol.png" />
+                        <h2>Involúcrate y Ayuda</h2>
+                        <p>Voluntariado</p>
+                        <span id="CountVol" class="ui-li-count">...</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#ListaDes" data-transition="none">
+                        <img src="img/ico/6ico_des.png" />
+                        <h2>Anímate y Participa</h2>
+                        <p>Desarrollo</p>
+                        <span id="CountDes" class="ui-li-count">...</span>
+                    </a>
+                </li>
+                <li data-role="list-divider" />
+                <li>
+                    <a href="#About" data-transition="none">
+                        <img src="img/ico/info.png" />
+                        <h2>Acerca de</h2>
+                        <p>Información Importante</p>
+                    </a>
+                </li>
+                <li data-role="list-divider" />
+            </ul>
+        </div>
+    </div>
+    <!--MiSíJoven(User)-->
+    <div data-role="page" id="ListaUser">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+            <a class="ui-btn-right ui-btn ui-icon-gear ui-corner-all ui-btn-icon-notext ui-nodisc-icon " href="#userpanel" style="background-color:green; margin:1% 1%">Mi Sí Joven</a>
+        </div>
+        <div id="pruebaForm"> </div>
+        <div id="ListaContentUser" data-role="content">
+        </div>
+        <script type="text/javascript">
+            allResultsSiJoven("ListaContentUser");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaUser" data-icon="bars" class="ui-alt-icon ui-btn-active">Lista</a></li>
+                    <li><a href="#CalendarioUser" data-icon="calendar" class="ui-alt-icon ui-state-disabled">Calendario</a></li>
+                    <li><a href="#UbicacionUser" data-icon="location" class="ui-alt-icon ui-state-disabled">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+        <!--UserPanel-->
+        <div data-role="panel" id="userpanel" data-position="right" data-display="overlay" data-swipe-close="false">
+            <ul data-role="listview">
+                <li data-icon="delete"><a href="#" data-rel="close" style="background-color:darkred; color:white; text-shadow:none;">Cerrar</a></li>
+                <li data-role="list-divider">Preferencias</li>
+            </ul>
+            <form>
+                <div id="checkboxes1" data-role="fieldcontain" data-controltype="checkboxes">
+                    <fieldset data-role="controlgroup" data-type="vertical">
+                        <p>Intereses:</p>
+                        <input name="cbAprendeyCrece" id="cbAprendeyCrece" type="checkbox" value="1">
+                        <label for="cbAprendeyCrece">Aprende y Crece</label>
+                        <input name="cbDescubreyTrabaja" id="cbDescubreyTrabaja" type="checkbox" value="1">
+                        <label for="cbDescubreyTrabaja">Descubre y Trabaja</label>
+                        <input name="cbCuidateyDenuncia" id="cbCuidateyDenuncia" type="checkbox" value="1">
+                        <label for="cbCuidateyDenuncia">Cuídate y Denuncia</label>
+                        <input name="cbDivierteteyDisfruta" id="cbDivierteteyDisfruta" type="checkbox" value="1">
+                        <label for="cbDivierteteyDisfruta">Diviértete y Disfruta</label>
+                        <input name="cbInvolucrateyAyuda" id="cbInvolucrateyAyuda" type="checkbox" value="1">
+                        <label for="cbInvolucrateyAyuda">Involúcrate y Ayuda</label>
+                        <input name="cbAnimateyParticipa" id="cbAnimateyParticipa" type="checkbox" value="1">
+                        <label for="cbAnimateyParticipa">Anímate y Participa</label>
+                    </fieldset>
+                </div>
+                <div data-role="fieldcontain" data-controltype="slider">
+                    <label for="sliderEdad">Edad:</label>
+                    <input name="slider" id="sliderEdad" type="range" min="14" max="28" value="14" data-highlight="false">
+                </div>
+                <div data-role="fieldcontain" data-controltype="toggleswitch">
+                    <label for="slider">Ubicación:</label>
+                    <select name="slider" id="my-slider" data-role="slider">
+                        <option value="off" selected>Off</option>
+                        <option value="on">On</option>
+                    </select>
+                </div>
+                
+<!-- jugo:Formulario pais en Settings -->               
+                <div id="show-me" class="hidden">
+                    <!-- jugo: Codigo de Colombia: 3686110 fecha:29/09/2014 -->
+                    <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                        <label class="col-md-2 control-label" for="FkPais">Pais:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="ddlPais" name="FkPais" data-mini="true">
+                            <!-- <option value="">...</option> -->
+                            <option value="3686110">Colombia</option>
+                            <option value="ext">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="FkPais" data-valmsg-replace="true"></span>
+                    </div>
+                    <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                        <label class="col-md-2 control-label" for="DepMenu">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="ddlRegion" name="FkRegion" data-mini="true">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="FkRegion" data-valmsg-replace="true"></span>
+                    </div>
+                    <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                        <label class="col-md-2 control-label" for="FkCiudad">Ciudad:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="ddlCiudad" name="FkCiudad" data-mini="true">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="FkCiudad" data-valmsg-replace="true"></span>
+                    </div>
+
+                </div>
+                <script type="text/javascript">
+                    $('#my-slider').change(function () {
+                        var myswitch = $(this);
+                        var show = myswitch[0].selectedIndex == 1 ? true : false;
+                        $('#show-me').toggle(show);
+                    });
+                    $('#selectmenu4').change(function () {
+                        var myswitch = $(this);
+                        var show = myswitch[0].selectedIndex == 0 ? true : false;
+                        $('#LocationCo').toggle(show);
+                    });
+                </script>
+
+                <div data-role="fieldcontain" data-controltype="selectmenu">
+                    <input type="button" id="guardarBTN" value="Guardar" style="background-color:green;"/>
+                </div>
+
+                <script type="text/javascript">
+                    $('#guardarBTN').click(function () {
+
+                        var datAprendeCrece = "";
+                        var datDescubreTrabaja = "";
+                        var datCuidateDenuncia = "";
+                        var datDivierteteDisfruta = "";
+                        var datInvolucrateAyuda = "";
+                        var datAnimateParticipa = "";
+
+                        var datsliderEdad = $("#sliderEdad").val();
+
+                        var datUbica = $("#my-slider").find(':selected').val();
+                        var datPais = $("#selectmenu4").find(':selected').val();
+                        var datDep = $("#DepMenu").find(':selected').val();
+
+                        if ($("#cbAprendeyCrece").is(':checked')) {
+                            datAprendeCrece = 1;
+                        } else {
+                            datAprendeCrece = 0;
+                        }
+
+                        if ($("#cbDescubreyTrabaja").is(':checked')) {
+                            datDescubreTrabaja = 1;
+                        } else {
+                            datDescubreTrabaja = 0;
+                        }
+
+                        if ($("#cbCuidateyDenuncia").is(':checked')) {
+                            datCuidateDenuncia = 1;
+                        } else {
+                            datCuidateDenuncia = 0;
+                        }
+
+                        if ($("#cbDivierteteyDisfruta").is(':checked')) {
+                            datDivierteteDisfruta = 1;
+                        } else {
+                            datDivierteteDisfruta = 0;
+                        }
+
+                        if ($("#cbInvolucrateyAyuda").is(':checked')) {
+                            datInvolucrateAyuda = 1;
+                        } else {
+                            datInvolucrateAyuda = 0;
+                        }
+
+                        if ($("#cbAnimateyParticipa").is(':checked')) {
+                            datAnimateParticipa = 1;
+                        } else {
+                            datAnimateParticipa = 0;
+                        }
+
+                        jsonObj = [];
+                        item = {}
+                        item["AC"] = datAprendeCrece;
+                        item["DT"] = datDescubreTrabaja;
+                        item["CD"] = datCuidateDenuncia;
+                        item["DD"] = datDivierteteDisfruta;
+                        item["IA"] = datInvolucrateAyuda;
+                        item["AP"] = datAnimateParticipa;
+                        item["edad"] = datsliderEdad;
+                        item["ubica"] = datUbica;
+                        item["pais"] = datPais;
+                        item["dep"] = datDep;
+
+                        //alert("Click en enviar, estado AC : "+ datAprendeCrece +" DT : "+ datDescubreTrabaja +" CD : "+ datCuidateDenuncia +" DD : "+ datDivierteteDisfruta +" IA : "+ datInvolucrateAyuda +" AP : "+ datAnimateParticipa +" Edad : "+ datsliderEdad +" Ubica : "+ datUbica +" pais : "+ datPais +" Dep : "+datDep);
+                        jsonObj.push(item);
+                        var jsonString = JSON.stringify(jsonObj);
+
+                        //alert(jsonString);
+                        localStorage.setItem("prefSiJoven", jsonString);
+                        $('#ListaContentUser').empty();
+                        allResultsSiJoven("ListaContentUser");
+                        return false;
+                    });
+                </script>
+            </form>
+        </div>
+    </div>
+
+    <!--Todo(All)-->
+    <!--/Lista-->
+    <div data-role="page" id="ListaAll">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentAll" data-role="content">
+        </div>
+        <script type="text/javascript">
+            allResults("ListaContentAll");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaAll" data-icon="bars" class="ui-alt-icon ui-btn-active" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioAll" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionAll" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Calendario-->
+    <div data-role="page" id="CalendarioAll">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentAll" data-role="content">
+            <div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed="true" id="AllResultP">
+                <h3>Eventos Permanentes</h3>
+            </div>
+            <script type="text/javascript">
+                AllResultsP("AllResultP");
+            </script>
+            <center>
+                <div id="datepickerAll"> </div>
+                <div>&nbsp; </div>
+                <div id="AllResultsCal"> </div>
+            </center>
+            <script>
+                $("#datepickerAll").datepicker({ dateFormat: "yy-mm-ddT00:00:00" });
+
+                var fechaAc = $("#datepickerAll").datepicker({ dateFormat: "yy-mm-ddT00:00:00" }).val();;
+
+                AllResultsCal(fechaAc, "AllResultsCal");
+
+                $(document).on("change", "#datepickerAll", function () {
+
+                    var fechaNC = $(this).val();
+
+                    $('#AllResultsCal').empty();
+
+                    AllResultsCal(fechaNC, "AllResultsCal");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaAll" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioAll" data-icon="calendar" class="ui-alt-icon ui-btn-active" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionAll" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Ubicación-->
+    <div data-role="page" id="UbicacionAll">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div class="ui-field-contain">
+                <!-- jugo: Lsitado Anterior -->
+                <!--
+                <label for="Uall">Busca por tu Departamento / Ciudad:</label>
+                <select name="Uall" id="Uall">
+                    <option value="3689982">Amazonas</option>
+                    <option value="3689815">Antioquia</option>
+                    <option value="3689717">Arauca</option>
+                    <option value="3670205">Archipiélago de San Andrés, Providencia y Santa Catalina</option>
+                    <option value="3689436">Atlántico</option>
+                    <option value="3688685">Bogota D.C.</option>
+                    <option value="3688650">Bolívar</option>
+                    <option value="3688536">Boyacá</option>
+                    <option value="3687951">Caldas</option>
+                    <option value="3687479">Caquetá</option>
+                    <option value="3687173">Casanare</option>
+                    <option value="3687029">Cauca</option>
+                    <option value="3686880">Cesar</option>
+                    <option value="3686431">Chocó</option>
+                    <option value="3685889">Córdoba</option>
+                    <option value="3685413">Cundinamarca</option>
+                    <option value="3681652">Guainía</option>
+                    <option value="3681344">Guaviare</option>
+                    <option value="3680692">Huila</option>
+                    <option value="3678847">La Guajira</option>
+                    <option value="3675686">Magdalena</option>
+                    <option value="3674810">Meta</option>
+                    <option value="3674021">Nariño</option>
+                    <option value="3673798">Norte de Santander</option>
+                    <option value="3671178">Putumayo</option>
+                    <option value="3671087">Quindío</option>
+                    <option value="3670698">Risaralda</option>
+                    <option value="3668578">Santander</option>
+                    <option value="3667725">Sucre</option>
+                    <option value="3666951">Tolima</option>
+                    <option value="3666313">Valle del Cauca</option>
+                    <option value="3666254">Vaupés</option>
+                    <option value="3666082">Vichada</option>
+                </select>
+                -->
+                <script type="text/javascript">
+        $(function () {
+            $("#UallPais").change(function () {
+                var selectedItem = $(this).val();
+                // Colombia = 3686110; 
+                if(selectedItem == "3686110"){
+                  $.getJSON('http://poi.colombiajoven.gov.co/api/departamento/' + selectedItem, function (result) {
+                      var Uall = $('#UallRegion');
+                      Uall.empty();
+                      $(document.createElement('option'))
+                              .attr('value', '')
+                              .text('Seleccionar...')
+                              .appendTo(Uall);
+                      $(document.createElement('option'))
+                              .attr('value', 'all')
+                              .text('TODOS')
+                              .appendTo(Uall);
+                      $(result).each(function () {
+                          $(document.createElement('option'))
+                              .attr('value', this.ID)
+                              .text(this.Nombre)
+                              .appendTo(Uall);
+                      });
+                  });    
+                }else if(selectedItem == "000000"){ //Exterior
+                    var UallRegion = $('#UallRegion');
+                    UallRegion.empty();
+                    $(document.createElement('option'))
+                        .attr('value', 'na')
+                        .text("N/A")
+                        .appendTo(UallRegion);
+                      
+                    var UallCiu = $('#UallCiudad');
+                    UallCiu.empty();
+                    $(document.createElement('option'))
+                        .attr('value', 'na')
+                        .text("N/A")
+                        .appendTo(UallCiu);
+                    
+                }
+                
+            });
+        });
+
+    
+    
+    $(function () {
+            $("#UallRegion").change(function () {
+                var selectedItem = $(this).val();
+                if (selectedItem == 'all'){
+                    var Uall = $('#UallCiudad');
+                    Uall.empty();
+                    $(document.createElement('option'))
+                        .attr('value', '')
+                        .text('Seleccionar...')
+                        .appendTo(Uall);
+                    $(document.createElement('option'))
+                        .attr('value', 'all')
+                        .text('TODOS')
+                        .appendTo(Uall);
+                }else{
+                    $.getJSON('http://poi.colombiajoven.gov.co/api/municipio/' + selectedItem, function (result) {
+                        var Uall = $('#UallCiudad');
+                        Uall.empty();
+                        $(document.createElement('option'))
+                            .attr('value', '')
+                            .text('Seleccionar...')
+                            .appendTo(Uall);
+                        $(document.createElement('option'))
+                            .attr('value', 'all')
+                            .text('TODOS')
+                            .appendTo(Uall);
+                        $(result).each(function () {
+                            $(document.createElement('option'))
+                                .attr('value', this.ID)
+                                .text(this.Nombre)
+                                .appendTo(Uall);
+                        });
+                    });
+                }
+            });
+        });
+        
+                </script>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallPais">Pais:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="UallPais" name="UallPais" data-mini="false">
+                            <!-- <option value="">...</option> -->
+                            <option value="">Seleccionar...</option>
+                            <option value="3686110">Colombia</option>
+                            <option value="000000">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallPais" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallRegion">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="UallRegion" name="UallRegion" data-mini="false">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallRegion" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallCiudad">Ciudad:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="UallCiudad" name="UallCiudad" data-mini="false">
+                        <option value="">...</option>
+                    </select>
+                    <span class="field-validation-valid" data-valmsg-for="UallCiudad" data-valmsg-replace="true"></span>
+                </div>
+
+
+            </div>
+            <br />
+            <div id="AllResultsU">
+            </div>
+            <script type="text/javascript">
+              var idPais = $("#UallPais").find(':selected').val();
+              
+
+                //var idSel = $("#Uall").find(':selected').val();
+
+                AllResultsUJG(idPais, "AllResultsU");
+
+                $("#Uall").change(function () {
+                    var sel = $(this).val();
+                    $('#AllResultsU').empty();
+                    AllResultsU(sel, "AllResultsU");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaAll" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioAll" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionAll" data-icon="location" class="ui-alt-icon ui-btn-active" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--Aprende y Crece(Edu)-->
+    <!--/Lista-->
+    <div data-role="page" id="ListaEdu">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentEdu" data-role="content">
+        </div>
+        <script type="text/javascript">
+            filterResults(1, "ListaContentEdu");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaEdu" data-icon="bars" class="ui-alt-icon ui-btn-active" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioEdu" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionEdu" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Calendario-->
+    <div data-role="page" id="CalendarioEdu">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed="true" id="PermanentEdu">
+                <h3>Eventos Permanentes</h3>
+            </div>
+            <script type="text/javascript">
+                filterResultsP(1, "PermanentEdu");
+            </script>
+            <center>
+                <div id="datepickerEdu"> </div>
+                <div>&nbsp; </div>
+                <div id="AllResultsCalEdu"> </div>
+            </center>
+            <script>
+                $("#datepickerEdu").datepicker({ dateFormat: "yy-mm-ddT00:00:00" });
+
+                var fechaAcEdu = $("#datepickerEdu").datepicker({ dateFormat: "yy-mm-ddT00:00:00" }).val();;
+
+                FilterResultsCal(1, fechaAcEdu, "AllResultsCalEdu");
+
+                $(document).on("change", "#datepickerEdu", function () {
+
+                    var fechaNC = $(this).val();
+
+                    $('#AllResultsCalEdu').empty();
+
+                    // JUGO: ya no se rompe
+                    // FilterResultsCal(1, fechaNC, "AllResultsCalEdu"); //Revisar porque se rompe
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaEdu" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioEdu" data-icon="calendar" class="ui-alt-icon ui-btn-active" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionEdu" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Ubicación-->
+    <div data-role="page" id="UbicacionEdu">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+        <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallPais">Pais:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="UallPais" name="UallPais" data-mini="false">
+                            <!-- <option value="">...</option> -->
+                            <option value="">Seleccionar...</option>
+                            <option value="3686110">Colombia</option>
+                            <option value="000000">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallPais" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallRegion">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="UallRegion" name="UallRegion" data-mini="false">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallRegion" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallCiudad">Ciudad:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="UallCiudad" name="UallCiudad" data-mini="false">
+                        <option value="">...</option>
+                    </select>
+                    <span class="field-validation-valid" data-valmsg-for="UallCiudad" data-valmsg-replace="true"></span>
+                </div>
+           <br />
+            <div id="AllResultsUEdu">
+            </div>
+            <script type="text/javascript">
+                var idSel = $("#UEdu").find(':selected').val();
+
+                filterResultsU(1, idSel, "AllResultsUEdu");
+
+                $("#UEdu").change(function () {
+                    var sel = $(this).val();
+                    $('#AllResultsUEdu').empty();
+                    filterResultsU(1, sel, "AllResultsUEdu");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaEdu" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioEdu" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionEdu" data-icon="location" class="ui-alt-icon ui-btn-active" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--Descubre y Trabaja(Emp)-->
+    <!--/Lista-->
+     <div data-role="page" id="ListaEmp">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentEmp" data-role="content">
+        </div>
+        <script type="text/javascript">
+            filterResults(2, "ListaContentEmp");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaEmp" data-icon="bars" class="ui-alt-icon ui-btn-active" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioEmp" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionEmp" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Calendario-->
+    <div data-role="page" id="CalendarioEmp">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed="true" id="PermanentEmp">
+                <h3>Eventos Permanentes</h3>
+            </div>
+            <script type="text/javascript">
+                filterResultsP(2, "PermanentEmp");
+            </script>
+            <center>
+                <div id="datepickerEmp"> </div>
+                <div>&nbsp; </div>
+                <div id="AllResultsCalEmp"> </div>
+            </center>
+            <script>
+                $("#datepickerEmp").datepicker({ dateFormat: "yy-mm-ddT00:00:00" });
+
+                var fechaAcEmp = $("#datepickerEmp").datepicker({ dateFormat: "yy-mm-ddT00:00:00" }).val();;
+
+                FilterResultsCal(2, fechaAcEmp, "AllResultsCalEmp");
+
+                $(document).on("change", "#datepickerEmp", function () {
+
+                    var fechaNC = $(this).val();
+
+                    $('#AllResultsCalEmp').empty();
+
+                    FilterResultsCal(2, fechaNC, "AllResultsCalEmp");
+                });
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaEmp" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioEmp" data-icon="calendar" class="ui-alt-icon ui-btn-active" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionEmp" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Ubicación-->
+    <div data-role="page" id="UbicacionEmp">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallPais">Pais:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="UallPais" name="UallPais" data-mini="false">
+                            <!-- <option value="">...</option> -->
+                            <option value="">Seleccionar...</option>
+                            <option value="3686110">Colombia</option>
+                            <option value="000000">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallPais" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallRegion">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="UallRegion" name="UallRegion" data-mini="false">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallRegion" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallCiudad">Ciudad:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="UallCiudad" name="UallCiudad" data-mini="false">
+                        <option value="">...</option>
+                    </select>
+                    <span class="field-validation-valid" data-valmsg-for="UallCiudad" data-valmsg-replace="true"></span>
+                </div>
+
+            <br />
+            <div id="AllResultsUEmp">
+            </div>
+            <script type="text/javascript">
+                var idSel = $("#UEmp").find(':selected').val();
+
+                filterResultsU(2, idSel, "AllResultsUEmp");
+
+                $("#UEmp").change(function () {
+                    var sel = $(this).val();
+                    $('#AllResultsUEmp').empty();
+                    filterResultsU(2, sel, "AllResultsUEmp");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaEmp" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioEmp" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionEmp" data-icon="location" class="ui-alt-icon ui-btn-active" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--Cuídate y Denuncia(Pre)-->
+    <!--/Lista-->
+    <div data-role="page" id="ListaPre">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentPre" data-role="content">
+        </div>
+        <script type="text/javascript">
+            filterResults(3, "ListaContentPre");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaPre" data-icon="bars" class="ui-alt-icon ui-btn-active" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioPre" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionPre" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Calendario-->
+    <div data-role="page" id="CalendarioPre">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed="true" id="PermanentPre">
+                <h3>Eventos Permanentes</h3>
+            </div>
+            <script type="text/javascript">
+                filterResultsP(3, "PermanentPre");
+            </script>
+            <center>
+                <div id="datepickerPre"> </div>
+                <div>&nbsp; </div>
+                <div id="AllResultsCalPre"> </div>
+            </center>
+            <script>
+                $("#datepickerPre").datepicker({ dateFormat: "yy-mm-ddT00:00:00" });
+
+                var fechaAcPre = $("#datepickerPre").datepicker({ dateFormat: "yy-mm-ddT00:00:00" }).val();;
+
+                FilterResultsCal(3, fechaAcPre, "AllResultsCalPre");
+
+                $(document).on("change", "#datepickerPre", function () {
+
+                    var fechaNC = $(this).val();
+
+                    $('#AllResultsCalPre').empty();
+
+                    FilterResultsCal(3, fechaNC, "AllResultsCalPre");
+                });
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaAPre" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioPre" data-icon="calendar" class="ui-alt-icon ui-btn-active" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionPre" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Ubicación-->
+    <div data-role="page" id="UbicacionPre">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallPais">Pais:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="UallPais" name="UallPais" data-mini="false">
+                            <!-- <option value="">...</option> -->
+                            <option value="">Seleccionar...</option>
+                            <option value="3686110">Colombia</option>
+                            <option value="000000">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallPais" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallRegion">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="UallRegion" name="UallRegion" data-mini="false">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallRegion" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallCiudad">Ciudad:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="UallCiudad" name="UallCiudad" data-mini="false">
+                        <option value="">...</option>
+                    </select>
+                    <span class="field-validation-valid" data-valmsg-for="UallCiudad" data-valmsg-replace="true"></span>
+                </div>
+
+            <br />
+            <div id="AllResultsUPre">
+            </div>
+            <script type="text/javascript">
+                var idSel = $("#UPre").find(':selected').val();
+
+                filterResultsU(3, idSel, "AllResultsUPre");
+
+                $("#UPre").change(function () {
+                    var sel = $(this).val();
+                    $('#AllResultsUPre').empty();
+                    filterResultsU(3, sel, "AllResultsUPre");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaPre" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioPre" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionPre" data-icon="location" class="ui-alt-icon ui-btn-active" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--Diviértete y Disfruta(Rec)-->
+    <!--/Lista-->
+    <div data-role="page" id="ListaRec">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentRec" data-role="content">
+        </div>
+        <script type="text/javascript">
+            filterResults(4, "ListaContentRec");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaRec" data-icon="bars" class="ui-alt-icon ui-btn-active" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioRec" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionRec" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Calendario-->
+    <div data-role="page" id="CalendarioRec">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed="true" id="PermanentRec">
+                <h3>Eventos Permanentes</h3>
+            </div>
+            <script type="text/javascript">
+                filterResultsP(4, "PermanentRec");
+            </script>
+            <center>
+                <div id="datepickerRec"> </div>
+                <div>&nbsp; </div>
+                <div id="AllResultsCalRec"> </div>
+            </center>
+            <script>
+                $("#datepickerRec").datepicker({ dateFormat: "yy-mm-ddT00:00:00" });
+
+                var fechaAcRec = $("#datepickerRec").datepicker({ dateFormat: "yy-mm-ddT00:00:00" }).val();;
+
+                FilterResultsCal(4, fechaAcRec, "AllResultsCalRec");
+
+                $(document).on("change", "#datepickerRec", function () {
+
+                    var fechaNC = $(this).val();
+
+                    $('#AllResultsCalRec').empty();
+
+                    FilterResultsCal(4, fechaNC, "AllResultsCalRec");
+                });
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaRec" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioRec" data-icon="calendar" class="ui-alt-icon ui-btn-active" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionRec" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Ubicación-->
+    <div data-role="page" id="UbicacionRec">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallPais">Pais:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="UallPais" name="UallPais" data-mini="false">
+                            <!-- <option value="">...</option> -->
+                            <option value="">Seleccionar...</option>
+                            <option value="3686110">Colombia</option>
+                            <option value="000000">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallPais" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallRegion">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="UallRegion" name="UallRegion" data-mini="false">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallRegion" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallCiudad">Ciudad:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="UallCiudad" name="UallCiudad" data-mini="false">
+                        <option value="">...</option>
+                    </select>
+                    <span class="field-validation-valid" data-valmsg-for="UallCiudad" data-valmsg-replace="true"></span>
+                </div>
+
+            <br />
+            <div id="AllResultsURec">
+            </div>
+            <script type="text/javascript">
+                var idSel = $("#URec").find(':selected').val();
+
+                filterResultsU(4, idSel, "AllResultsURec");
+
+                $("#URec").change(function () {
+                    var sel = $(this).val();
+                    $('#AllResultsURec').empty();
+                    filterResultsU(4, sel, "AllResultsURec");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaRec" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioRec" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionRec" data-icon="location" class="ui-alt-icon ui-btn-active" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--Involúcrate y Ayuda(Vol)-->
+    <!--/Lista-->
+    <div data-role="page" id="ListaVol">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentVol" data-role="content">
+        </div>
+        <script type="text/javascript">
+            filterResults(5, "ListaContentVol");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaVol" data-icon="bars" class="ui-alt-icon ui-btn-active" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioVol" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionVol" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Calendario-->
+    <div data-role="page" id="CalendarioVol">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed="true" id="PermanentVol">
+                <h3>Eventos Permanentes</h3>
+            </div>
+            <script type="text/javascript">
+                filterResultsP(5, "PermanentVol");
+            </script>
+            <center>
+                <div id="datepickerVol"> </div>
+                <div>&nbsp; </div>
+                <div id="AllResultsCalVol"> </div>
+            </center>
+            <script>
+                $("#datepickerVol").datepicker({ dateFormat: "yy-mm-ddT00:00:00" });
+
+                var fechaAcVol = $("#datepickerVol").datepicker({ dateFormat: "yy-mm-ddT00:00:00" }).val();;
+
+                FilterResultsCal(5, fechaAcVol, "AllResultsCalVol");
+
+                $(document).on("change", "#datepickerVol", function () {
+
+                    var fechaNC = $(this).val();
+
+                    $('#AllResultsCalVol').empty();
+
+                    FilterResultsCal(5, fechaNC, "AllResultsCalVol");
+                });
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaVol" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioVol" data-icon="calendar" class="ui-alt-icon ui-btn-active" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionVol" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Ubicación-->
+    <div data-role="page" id="UbicacionVol">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallPais">Pais:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="UallPais" name="UallPais" data-mini="false">
+                            <!-- <option value="">...</option> -->
+                            <option value="">Seleccionar...</option>
+                            <option value="3686110">Colombia</option>
+                            <option value="000000">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallPais" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallRegion">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="UallRegion" name="UallRegion" data-mini="false">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallRegion" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallCiudad">Ciudad:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="UallCiudad" name="UallCiudad" data-mini="false">
+                        <option value="">...</option>
+                    </select>
+                    <span class="field-validation-valid" data-valmsg-for="UallCiudad" data-valmsg-replace="true"></span>
+                </div>
+
+            <br />
+            <div id="AllResultsUVol">
+            </div>
+            <script type="text/javascript">
+                var idSel = $("#UVol").find(':selected').val();
+
+                filterResultsU(5, idSel, "AllResultsUVol");
+
+                $("#UVol").change(function () {
+                    var sel = $(this).val();
+                    $('#AllResultsUVol').empty();
+                    filterResultsU(5, sel, "AllResultsUVol");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaVol" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioVol" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionVol" data-icon="location" class="ui-alt-icon ui-btn-active" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!--Anímate y Participa(Des)-->
+    <!--/Lista-->
+    <div data-role="page" id="ListaDes">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div id="ListaContentDes" data-role="content">
+        </div>
+        <script type="text/javascript">
+            filterResults(6, "ListaContentDes");
+        </script>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaDes" data-icon="bars" class="ui-alt-icon ui-btn-active" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioDes" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionDes" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Calendario-->
+    <div data-role="page" id="CalendarioDes">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+            <div data-role="collapsible" class="ui-nodisc-icon ui-alt-icon" data-mini="true" data-collapsed="true" id="PermanentDes">
+                <h3>Eventos Permanentes</h3>
+            </div>
+            <script type="text/javascript">
+                filterResultsP(6, "PermanentDes");
+            </script>
+            <center>
+                <div id="datepickerDes"> </div>
+                <div>&nbsp; </div>
+                <div id="AllResultsCalDes"> </div>
+            </center>
+            <script>
+                $("#datepickerDes").datepicker({ dateFormat: "yy-mm-ddT00:00:00" });
+
+                var fechaAcDes = $("#datepickerDes").datepicker({ dateFormat: "yy-mm-ddT00:00:00" }).val();;
+
+                FilterResultsCal(6, fechaAcDes, "AllResultsCalDes");
+
+                $(document).on("change", "#datepickerDes", function () {
+
+                    var fechaNC = $(this).val();
+
+                    $('#AllResultsCalDes').empty();
+
+                    FilterResultsCal(6, fechaNC, "AllResultsCalDes");
+                });
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaDes" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioDes" data-icon="calendar" class="ui-alt-icon ui-btn-active" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionDes" data-icon="location" class="ui-alt-icon" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--/Ubicación-->
+    <div data-role="page" id="UbicacionDes">
+        <div data-role="header" data-position="fixed">
+            <center><img width="55%" src="img/icon-sijoven.png" /></center>
+        </div>
+        <div data-role="content">
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallPais">Pais:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkPais must be a number." data-val-required="The FkPais field is required." id="UallPais" name="UallPais" data-mini="false">
+                            <!-- <option value="">...</option> -->
+                            <option value="">Seleccionar...</option>
+                            <option value="3686110">Colombia</option>
+                            <option value="000000">Exterior</option>
+                            
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallPais" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallRegion">Depto:</label>
+                        <select class="form-control" data-val="true" data-val-number="The field FkRegion must be a number." data-val-required="The FkRegion field is required." id="UallRegion" name="UallRegion" data-mini="false">
+                            <option value="">...</option>
+                        </select>
+                        <span class="field-validation-valid" data-valmsg-for="UallRegion" data-valmsg-replace="true"></span>
+                </div>
+                <div data-role="fieldcontain" data-controltype="selectmenu" class="ui-nodisc-icon ui-alt-icon">
+                    <label class="col-md-2 control-label" for="UallCiudad">Ciudad:</label>
+                    <select class="form-control" data-val="true" data-val-number="The field FkCiudad must be a number." data-val-required="The FkCiudad field is required." id="UallCiudad" name="UallCiudad" data-mini="false">
+                        <option value="">...</option>
+                    </select>
+                    <span class="field-validation-valid" data-valmsg-for="UallCiudad" data-valmsg-replace="true"></span>
+                </div>
+
+            <br />
+            <div id="AllResultsUDes">
+            </div>
+            <script type="text/javascript">
+                var idSel = $("#UDes").find(':selected').val();
+
+                filterResultsU(6, idSel, "AllResultsUDes");
+
+                $("#UDes").change(function () {
+                    var sel = $(this).val();
+                    $('#AllResultsUDes').empty();
+                    filterResultsU(6, sel, "AllResultsUDes");
+                });
+
+            </script>
+        </div>
+        <div data-role="footer" data-position="fixed">
+            <div data-role="navbar">
+                <ul class="ui-nodisc-icon">
+                    <li><a href="#inicio" data-icon="carat-l" data-theme="b" data-transition="none">Home</a></li>
+                    <li><a href="#ListaDes" data-icon="bars" class="ui-alt-icon" data-transition="none">Lista</a></li>
+                    <li><a href="#CalendarioDes" data-icon="calendar" class="ui-alt-icon" data-transition="none">Calendario</a></li>
+                    <li><a href="#UbicacionDes" data-icon="location" class="ui-alt-icon ui-btn-active" data-transition="none">Ubicación</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!--About-->
+    <div data-role="page" id="About">
+        <div data-role="content">
+            <div class="ui-grid-a">
+                <div style="width:30%;" class="ui-block-a">
+                    <center><img style="width: 80%" src="img/About/ico_512.png" /></center>
+                </div>
+                <div style="width:70%;" class="ui-block-b">
+                    <img style="width:100%;" src="img/About/icon-sijoven.png" />
+                    <h6 style="text-align:center">Si Joven App Ver. 1.1</h6>
+                </div>
+            </div>
+            <hr style="border: 0px currentColor; height: 1px; margin-top: 1px; margin-bottom: 1px; background-color:#e9e9e9;">
+            <h4 style="text-align:center">Desarrollado Por:</h4>
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <center>
+                        <div>Diego Fernando Quintero Gómez</div>
+                        <a href="http://www.twitter.com/dfquintero"><img src="img/About/png/tw.png" /></a>
+                        <a href="http://co.linkedin.com/in/dfquintero/"><img src="img/About/png/lin.png" /></a>
+                        <a href="http://www.dfquintero.com/"><img src="img/About/png/web.png" /></a>
+                    </center>
+                </div>
+                <div class="ui-block-b">
+                    <center>
+                        <div>Marylin Alarcón De Avila</div>
+                        <a href="http://www.twitter.com/"><img src="img/About/png/tw.png" /></a>
+                        <a href="http://www.linkedin.com/"><img src="img/About/png/lin.png" /></a>
+                        <a href="http://www.facebook.com"><img src="img/About/png/fb.png" /></a>
+                    </center>
+                </div>
+            </div>
+            <div class="ui-grid-a">
+                    <h5 style="text-align:center; text-wrap:normal; color:#333333;">  </h5>
+                
+            </div>
+            <div class="ui-grid-solo">
+                <h5 style="text-align: center; text-wrap: normal"></h5>
+            </div>
+            <hr style="border: 0px currentColor; height: 1px; margin-top: 1px; margin-bottom: 1px; background-color:#e9e9e9;">
+            <h4 style="text-align:center; text-decoration:wavy">Con El Apoyo de:</h4>
+            <center>
+                <img style="max-width: 90%;" src="img/About/Logo%20Colombia%20Joven.png" />
+                <img style="max-width: 90%;" src="img/About/mintic.png" />
+            </center><br />
+            <hr style="border: 0px currentColor; height: 1px; margin-top: 1px; margin-bottom: 1px; background-color:#e9e9e9;">
+            <div class="ui-grid-a">
+                <div class="ui-block-a">
+                    <br />
+                    <center>
+                        <img src="img/About/gplv3-127x51.png" />
+                        <h5>Esta aplicación esta licenciada bajo el modelo GNU GPL (General Public License).</h5>
+                    </center>
+                </div>
+                <div class="ui-block-b">
+                    <center>
+                        <h5>
+                            <a href="http://creativecommons.org/licenses/by-sa/4.0/" rel="license"><img style="border-width: 0px;" alt="Licencia Creative Commons" src="http://i.creativecommons.org/l/by-sa/4.0/88x31.png"></a><br />
+                            <span property="dct:title" rel="dct:type" href="http://purl.org/dc/dcmitype/StillImage" xmlns:dct="http://purl.org/dc/terms/">
+                                Iconos
+                            </span>por
+                            <a href="http://www.dfquintero.com" rel="cc:attributionURL" property="cc:attributionName"
+                               xmlns:cc="http://creativecommons.org/ns#">
+                                dfquintero
+                            </a>se distribuye bajo una
+                            <a href="http://creativecommons.org/licenses/by-sa/4.0/" rel="license">
+                                Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional
+                            </a>.<br />
+                            Basada en una obra en<a href="http://www.flaticon.es/autores/freepik" rel="dct:source" xmlns:dct="http://purl.org/dc/terms/">
+                                http://www.flaticon.es/autores/freepik
+                            </a>
+                        </h5>
+                    </center>
+                </div>
+            </div>
+            <hr style="border: 0px currentColor; height: 1px; margin-top: 1px; margin-bottom: 1px; background-color:#e9e9e9;">
+            <h4 style="text-align:center; color:darkred">
+                Tenga en cuenta que esta aplicación requiere acceso a inernet y puede
+                consumir recursos de su plan de datos.
+            </h4>
+            <hr style="border: 0px currentColor; height: 1px; margin-top: 1px; margin-bottom: 1px; background-color:#e9e9e9;">
+            <a data-role="button" href="#inicio" style="background-color:#96d300; color:black;" data-transition="none" data-direction="reverse">Volver</a>
+        </div>
+    </div>
+</body>
+</html>
