@@ -195,7 +195,7 @@ function filterResults(categoria, elemento) {
 				    items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
 				    items.push("<ul data-mini='true'>");
 				    items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
-				    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
+				    items.push("<li><a href='#' data-theme='b' class='ui-btn' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
 				    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
 				    items.push("</ul>");
 				    items.push("</div>");
@@ -271,7 +271,7 @@ function AllResultsP(elemento) {
                         items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                         items.push("<ul data-mini='true'>");
                         items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
-                        items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
+                        items.push("<li><a href='#' data-theme='b' class='ui-btn' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                         items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                         items.push("</ul>");
                         items.push("</div>");
@@ -348,7 +348,7 @@ function filterResultsP(categoria, elemento) {
                     items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                     items.push("<ul data-mini='true'>");
                     items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
-                    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
+                    items.push("<li><a href='#' data-theme='b' class='ui-btn' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                     items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                     items.push("</ul>");
                     items.push("</div>");
@@ -432,7 +432,7 @@ function AllResultsCal(fechaSel, elemento) {
                     items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                     items.push("<ul data-mini='true'>");
                     items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
-                    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
+                    items.push("<li><a href='#' data-theme='b' class='ui-btn' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                     items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                     items.push("</ul>");
                     items.push("</div>");
@@ -515,7 +515,7 @@ function FilterResultsCal(cat, fechaSel, elemento) {
                         items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                         items.push("<ul data-mini='true'>");
                         items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
-                        items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
+                        items.push("<li><a href='#' data-theme='b' class='ui-btn' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                         items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                         items.push("</ul>");
                         items.push("</div>");
@@ -885,7 +885,7 @@ function allResultsSiJoven(elemento) {
                 items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                 items.push("<ul data-mini='true'>");
                 items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
-                items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
+                items.push("<li><a href='#' data-theme='b' class='ui-btn' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                 items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                 items.push("</ul>");
                 items.push("</div>");
