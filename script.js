@@ -2,14 +2,10 @@
     dataType: "json",
     url: 'http://poi.colombiajoven.gov.co/api/oferta',
 }).done(function (data) {
-
     var info = [];
     var user = 0, edu = 0, emp = 0, pre = 0, rec = 0, vol = 0, des = 0, all = 0;
-
     $.each(data, function (key, val) {
-
         var img = '/img/ico/ico_300.png'
-
         switch (val.FkSeccion) {
             case '_***_': user++;
                 break;
@@ -28,7 +24,6 @@
         }
         all = edu + emp + pre + rec + vol + des;
     });
-
     $("#CountUser").text(user);
     $("#CountAll").text(all);
     $("#CountEdu").text(edu);
@@ -55,7 +50,6 @@ function sortByKey(array, key) {
 }
 
 function seccionIMG(seccion) {
-
     switch (seccion) {
         case 1: img = '1ico_edu.png';
             break;
@@ -70,9 +64,6 @@ function seccionIMG(seccion) {
         case 6: img = '6ico_des.png';
             break;
     }
-
-
-
     return img;
 }
 
@@ -83,6 +74,7 @@ function allResults(elemento) {
         url: 'http://poi.colombiajoven.gov.co/api/oferta',
     }).done(function (data) {
         var items = [];
+
         $.each(data, function (key, val) {
             var img = seccionIMG(val.FkSeccion);
 			
@@ -90,11 +82,12 @@ function allResults(elemento) {
 			var nreg = convertirNReg(val.FkPais,val.FkRegion);
 			var ncity = convertirNCity(val.FkPais, val.FkRegion, val.FkCiudad);
 
-            if (val.Oportunidad.length > 0) {
+			if (val.Oportunidad.length > 0) {
+			    var dIni = new Date(val.FechaInicio);
 
-                items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_1' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-                items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                items.push("<div data-role='popup' id='" + val.PkOferta + "_1' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                 items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                 items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                 items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -114,8 +107,8 @@ function allResults(elemento) {
                 items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                 items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                 items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                items.push("<p style='text-wrap:normal'><b>Fecha Inicio - jugo1: </b>" + val.FechaInicio + "</p>");
-                items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                 items.push("</div>");
                 items.push("<div data-role='collapsible'>");
                 items.push("<h3>Ubicación</h3>");
@@ -154,6 +147,7 @@ function filterResults(categoria, elemento) {
         url: 'http://poi.colombiajoven.gov.co/api/oferta',
     }).done(function (data) {
         var items = [];
+
         $.each(data, function (key, val) {
             if (val.FkSeccion == categoria) {
                 var img = seccionIMG(val.FkSeccion);
@@ -165,9 +159,9 @@ function filterResults(categoria, elemento) {
 				if (val.Oportunidad.length > 0) {
                                     var dIni = new Date(val.FechaInicio);
 
-				    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+				    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_2' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-				    items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+				    items.push("<div data-role='popup' id='" + val.PkOferta + "_2' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
 				    items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
 				    items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
 				    items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -241,9 +235,9 @@ function AllResultsP(elemento) {
 
                     if (val.Oportunidad.length > 0) {
 
-                        items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                        items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_3' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-                        items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                        items.push("<div data-role='popup' id='" + val.PkOferta + "_3' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                         items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                         items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                         items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -263,8 +257,8 @@ function AllResultsP(elemento) {
                         items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                         items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                         items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                        items.push("<p style='text-wrap:normal'><b>Fecha Inicio - jugo3: </b>" + val.FechaInicio + "</p>");
-                        items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                        items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                        items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                         items.push("</div>");
                         items.push("<div data-role='collapsible'>");
                         items.push("<h3>Ubicación</h3>");
@@ -318,9 +312,9 @@ function filterResultsP(categoria, elemento) {
 
                 if (val.Oportunidad.length > 0) {
 
-                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_4' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-                    items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                    items.push("<div data-role='popup' id='" + val.PkOferta + "_4' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                     items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                     items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                     items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -340,8 +334,8 @@ function filterResultsP(categoria, elemento) {
                     items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio-jugo4: </b>" + val.FechaInicio + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                     items.push("</div>");
                     items.push("<div data-role='collapsible'>");
                     items.push("<h3>Ubicación</h3>");
@@ -402,9 +396,9 @@ function AllResultsCal(fechaSel, elemento) {
 
                 if (val.Oportunidad.length > 0) {
 
-                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_5' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-                    items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                    items.push("<div data-role='popup' id='" + val.PkOferta + "_5' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                     items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                     items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                     items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -424,8 +418,8 @@ function AllResultsCal(fechaSel, elemento) {
                     items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio-jugo5: </b>" + val.FechaInicio + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                     items.push("</div>");
                     items.push("<div data-role='collapsible'>");
                     items.push("<h3>Ubicación</h3>");
@@ -485,9 +479,9 @@ function FilterResultsCal(cat, fechaSel, elemento) {
 
                     if (val.Oportunidad.length > 0) {
 
-                        items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                        items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_6' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-                        items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                        items.push("<div data-role='popup' id='" + val.PkOferta + "_6' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                         items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                         items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                         items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -507,8 +501,8 @@ function FilterResultsCal(cat, fechaSel, elemento) {
                         items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                         items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                         items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                        items.push("<p style='text-wrap:normal'><b>Fecha Inicio-jugo6: </b>" + val.FechaInicio + "</p>");
-                        items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                        items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                        items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                         items.push("</div>");
                         items.push("<div data-role='collapsible'>");
                         items.push("<h3>Ubicación</h3>");
@@ -519,7 +513,7 @@ function FilterResultsCal(cat, fechaSel, elemento) {
                         items.push("</div>");
                         items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                         items.push("<ul data-mini='true'>");
-                        items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ir A</a></li>");
+                        items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
                         items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                         items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                         items.push("</ul>");
@@ -543,8 +537,8 @@ function FilterResultsCal(cat, fechaSel, elemento) {
         $("div[id$='FCalGenNbar']").navbar();
     });
 }
-//Ubicacaion Todas Ofertas
 
+//Ubicacion Todas Ofertas
 function AllResultsUJG(pais, depto, ciudad, elemento){
     
     
@@ -563,8 +557,9 @@ function AllResultsUJG(pais, depto, ciudad, elemento){
                     
                 if (val.Oportunidad.length > 0) {
                       
-                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");                    
-                    items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_7' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+
+                    items.push("<div data-role='popup' id='" + val.PkOferta + "_7' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                     items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                     items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                     items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -584,8 +579,8 @@ function AllResultsUJG(pais, depto, ciudad, elemento){
                     items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio - jugo7: </b>" + val.FechaInicio + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                     items.push("</div>");
                     items.push("<div data-role='collapsible'>");
                     items.push("<h3>Ubicación</h3>");
@@ -596,12 +591,12 @@ function AllResultsUJG(pais, depto, ciudad, elemento){
                     items.push("</div>");
                     items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                     items.push("<ul data-mini='true'>");
-                    items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ir A</a></li>");
+                    items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
                     items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                     items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                     items.push("</ul>");
                     items.push("</div>");
-                    items.push("</div>");           
+                    items.push("</div>");
                 }
             }else if (val.FkPais=="3686110" && (val.FkCiudad == ciudad || val.FkRegion == depto)){  //Es Colombia
                 var img = seccionIMG(val.FkSeccion);
@@ -689,9 +684,9 @@ function AllResultsU(dep, elemento) {
 
                 if (val.Oportunidad.length > 0) {
 
-                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_8' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-                    items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                    items.push("<div data-role='popup' id='" + val.PkOferta + "_8' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                     items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                     items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                     items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -711,8 +706,8 @@ function AllResultsU(dep, elemento) {
                     items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                     items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio-jugo9: </b>" + val.FechaInicio + "</p>");
-                    items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                    items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                     items.push("</div>");
                     items.push("<div data-role='collapsible'>");
                     items.push("<h3>Ubicación</h3>");
@@ -723,7 +718,7 @@ function AllResultsU(dep, elemento) {
                     items.push("</div>");
                     items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                     items.push("<ul data-mini='true'>");
-                    items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ir A</a></li>");
+                    items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
                     items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                     items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                     items.push("</ul>");
@@ -769,47 +764,46 @@ function filterResultsU(cat, dep, elemento ) {
                                                     var dIni = date(val.FechaInicio);
                                                     var dFin = date(val.FechaFin);
 
-						    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                                                    items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_9' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-						    items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
-						    items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
-						    items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
-						    items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
-						    items.push("<div data-role='collapsible' data-collapsed='false'>");
-						    items.push("<h3>Información</h3>");
-						    items.push("<p style='text-wrap:normal; text-align:center'><b>" + val.Seccion + "</b></p>");
-						    items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Informacion + "</p>");
-						    items.push("</div>");
-						    items.push("<div data-role='collapsible'>");
-						    items.push("<h3>Entidad</h3>");
-						    items.push("<p style='text-wrap:normal'><b>Nombre: </b>" + val.EntidadNombre + "</p>");
-						    items.push("<p style='text-wrap:normal'><b>Contacto: </b><a href='" + val.Contacto + "' data-rel='external' >" + val.Contacto + "</a></p>");
-						    items.push("<p style='text-wrap:normal'><b>Web: </b><a href='" + val.EntidadUrl + "' data-rel='external' >" + val.EntidadUrl + "</a></p>");
-						    items.push("</div>");
-						    items.push("<div data-role='collapsible'>");
-						    items.push("<h3>Requisitos</h3>");
-						    items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
-						    items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
-						    items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                                                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio-jugo10: </b>" + dIni.getDate() + "</p>");
-						    //items.push("<p style='text-wrap:normal'><b>Fecha Inicio: </b>" + val.FechaInicio + "</p>");
-						    items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
-						    items.push("</div>");
-						    items.push("<div data-role='collapsible'>");
-						    items.push("<h3>Ubicación</h3>");
-						    items.push("<p style='text-wrap:normal'><b>País: </b>" + npais + "</p>");
-						    items.push("<p style='text-wrap:normal'><b>Región: </b>" + nreg + "</p>");
-						    items.push("<p style='text-wrap:normal'><b>Ciudad: </b>" + ncity + "</p>");
-						    items.push("</div>");
-						    items.push("</div>");
-						    items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
-						    items.push("<ul data-mini='true'>");
-						    items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ir A</a></li>");
-						    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
-						    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
-						    items.push("</ul>");
-						    items.push("</div>");
-						    items.push("</div>");
+                                                    items.push("<div data-role='popup' id='" + val.PkOferta + "_9' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                                                    items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
+                                                    items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
+                                                    items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
+                                                    items.push("<div data-role='collapsible' data-collapsed='false'>");
+                                                    items.push("<h3>Información</h3>");
+                                                    items.push("<p style='text-wrap:normal; text-align:center'><b>" + val.Seccion + "</b></p>");
+                                                    items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Informacion + "</p>");
+                                                    items.push("</div>");
+                                                    items.push("<div data-role='collapsible'>");
+                                                    items.push("<h3>Entidad</h3>");
+                                                    items.push("<p style='text-wrap:normal'><b>Nombre: </b>" + val.EntidadNombre + "</p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Contacto: </b><a href='" + val.Contacto + "' data-rel='external' >" + val.Contacto + "</a></p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Web: </b><a href='" + val.EntidadUrl + "' data-rel='external' >" + val.EntidadUrl + "</a></p>");
+                                                    items.push("</div>");
+                                                    items.push("<div data-role='collapsible'>");
+                                                    items.push("<h3>Requisitos</h3>");
+                                                    items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                                                    items.push("</div>");
+                                                    items.push("<div data-role='collapsible'>");
+                                                    items.push("<h3>Ubicación</h3>");
+                                                    items.push("<p style='text-wrap:normal'><b>País: </b>" + npais + "</p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Región: </b>" + nreg + "</p>");
+                                                    items.push("<p style='text-wrap:normal'><b>Ciudad: </b>" + ncity + "</p>");
+                                                    items.push("</div>");
+                                                    items.push("</div>");
+                                                    items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
+                                                    items.push("<ul data-mini='true'>");
+                                                    items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
+                                                    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
+                                                    items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
+                                                    items.push("</ul>");
+                                                    items.push("</div>");
+                                                    items.push("</div>");
 					}
 				}            
 			}
@@ -835,37 +829,29 @@ function allResultsSiJoven(elemento) {
         url: 'http://poi.colombiajoven.gov.co/api/oferta',
     }).done(function (data) {
         var items = [];
-
         var jsonfile = "";
-
         if (localStorage.getItem('prefSiJoven')) {
             jsonfile = 1;
         } else {
             jsonfile = 0;
-
         }
-
         var verif = "";
-
         $.each(data, function (key, val) {
             var img = seccionIMG(val.FkSeccion);
-
             verif = 0;
-
             if (jsonfile == 0) { verif = 1; }
             else {
                 verif = validarPSiJoven(val.FkSeccion, val.EdadMaxima, val.EdadMinima, val.FkPais, val.FkRegion);
             }
-
             var npais = convertirNPais(val.FkPais);
             var nreg = convertirNReg(val.FkPais, val.FkRegion);
             var ncity = convertirNCity(val.FkPais, val.FkRegion, val.FkCiudad);
 
             if (val.Oportunidad.length > 0 && verif == 1) {
 
-                items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
+                items.push("<li data-icon='plus' class='ui-nodisc-icon ui-alt-icon' ><a href='#" + val.PkOferta + "_0' value =" + val.PkOferta + " data-rel='popup' ><img src='img/ico/" + img + "' style='margin:10px; height: 60px; width: 60px;' /> <h1>" + val.Oportunidad + "</h1> <p>" + val.EntidadNombre + " </p></a></li>");
 
-                items.push("<div data-role='popup' id='" + val.PkOferta + "_' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
+                items.push("<div data-role='popup' id='" + val.PkOferta + "_0' data-theme='b' style='top: 5%; left: 5%; right: 5%; width: 90%; height: 90%; position: fixed; overflow-y:auto; overflow-x:hidden; background-color:rgba(0, 0, 0, 0.80);'>");
                 items.push("<center><img src='img/ico/" + img + "' style='max-width:25%; margin:5% 1px; ' /></center>");
                 items.push("<h2 style='text-wrap:normal; text-align:center'>" + val.Oportunidad + "</h2>");
                 items.push("<div data-role='collapsible-set' id='" + val.PkOferta + "_CSet' data-mini='true' class='ui-nodisc-icon ui-alt-icon' data-theme='a' style='width: 90%; margin-left:5%; margin-right:5%;'>");
@@ -885,8 +871,8 @@ function allResultsSiJoven(elemento) {
                 items.push("<p style='text-wrap:normal; text-align:justify'>" + val.Requisitos + "</p>");
                 items.push("<p style='text-wrap:normal'><b>Población Objetivo: </b>" + val.Requisitos + "</p>");
                 items.push("<p style='text-wrap:normal'><b>Edad: </b>" + val.EdadMinima + " - " + val.EdadMaxima + "</p>");
-                items.push("<p style='text-wrap:normal'><b>Fecha Inicio - jugo11: </b>" + val.FechaInicio + "</p>");
-                items.push("<p style='text-wrap:normal'><b>Fecha Fin: </b>" + val.FechaFin + "</p>");
+                items.push("<p style='text-wrap:normal'><b>Fecha Inicio (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
+                items.push("<p style='text-wrap:normal'><b>Fecha Fin (D/M/A): </b>" + val.FechaInicio.slice(9, 10) + "/" + val.FechaInicio.slice(6, 7) + "/" + val.FechaInicio.slice(0, 4) + "</p>");
                 items.push("</div>");
                 items.push("<div data-role='collapsible'>");
                 items.push("<h3>Ubicación</h3>");
@@ -897,7 +883,7 @@ function allResultsSiJoven(elemento) {
                 items.push("</div>");
                 items.push("<div data-role='navbar' id='" + val.PkOferta + "_Nbar' class='ui-nodisc-icon' style='margin:1% 5%;'>");
                 items.push("<ul data-mini='true'>");
-                items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ir A</a></li>");
+                items.push("<li><a href='" + val.UrlFuente + "'data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 128, 0, 0.80); ' data-icon='check'>Ver más</a></li>");
                 items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                 items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                 items.push("</ul>");
@@ -911,7 +897,7 @@ function allResultsSiJoven(elemento) {
         });
         var container = document.getElementById(elemento)
         $("<ul/>", {
-            "id": "eventList" + elemento, "data-role": "listview", "data-inset": "true", "data-filter-placeholder": "Buscar Oportunidades...", "data-filter": "true", "class": "'ui-nodisc-icon ui-alt-icon'",
+            "id": "eventList" + elemento, "data-role": "listview", "data-inset": "true", "class": "'ui-nodisc-icon ui-alt-icon'",
             html: items.join("")
         }).appendTo(container);
         $("#eventList" + elemento).listview();
