@@ -123,6 +123,7 @@ function allResults(elemento) {
                 items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(0, 148, 255, 0.80); ' class='ui-btn' data-icon='comment' onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "')'>Compartir</a></li>");
                 items.push("<li><a href='#' data-theme='b' style='border: none; margin: 1px 5%; background-color: rgba(139, 0, 0, 0.80); ' data-icon='delete' data-rel='back'>Cerrar</a></li>");
                 items.push("</ul>");
+                items.push("<button onclick='window.plugins.socialsharing.share('#SíJovenApp " + val.Oportunidad + "', null, null, '" + val.UrlFuente + "'>message only</button>");
                 items.push("</div>");
                 items.push("</div>");
             }
